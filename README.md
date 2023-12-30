@@ -1,4 +1,4 @@
-# TrackAndFieldHub
+# RunStravaSync
 
 ## Overview
 

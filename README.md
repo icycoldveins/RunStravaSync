@@ -2,7 +2,7 @@
 
 ## Overview
 
-TrackAndFieldHub is an innovative fitness tracking and analysis platform, meticulously tailored for track and field athletes. By leveraging the power of Strava integration, TrackAndFieldHub offers specialized tools and insights to help athletes enhance their performance, strategize their training, and achieve their athletic goals.
+RunStravaSync is an innovative fitness tracking and analysis platform, meticulously tailored for track and field athletes. By leveraging the power of Strava integration, RunStravaSync offers specialized tools and insights to help athletes enhance their performance, strategize their training, and achieve their athletic goals.
 
 ## Features
 

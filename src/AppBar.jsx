@@ -15,8 +15,12 @@ import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
-const userSettings = ["Profile", "Logout"]; // User menu options
 import ListItemIcon from "@mui/material/ListItemIcon";
+import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPersonRunning } from "@fortawesome/free-solid-svg-icons";
+
+const userSettings = ["Profile", "Logout"]; // User menu options
 
 export default function ButtonAppBar() {
   const [userAnchorEl, setUserAnchorEl] = React.useState(null);
@@ -61,6 +65,10 @@ export default function ButtonAppBar() {
           </IconButton>
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <FontAwesomeIcon
+              icon={faPersonRunning}
+              style={{ marginRight: "8px" }}
+            />{" "}
             RunStravaSync
           </Typography>
 

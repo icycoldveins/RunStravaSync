@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import ResponsiveAppBar from "./AppBar.jsx";
 import LoginPage from "./LoginPage";
+import HomePage from "./HomePage.jsx";
+import { UserProvider } from "./contexts/UserContext.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,10 +21,12 @@ function App() {
 
   return (
     <Router>
-      <div>
-        {isLoggedIn && <ResponsiveAppBar />}
-        {!isLoggedIn && <LoginPage onLogin={handleLogin} />}
-      </div>
+      <UserProvider>
+        <div>
+          {isLoggedIn && <ResponsiveAppBar />}
+          {isLoggedIn ? <HomePage /> : <LoginPage onLogin={handleLogin} />}
+        </div>
+      </UserProvider>
     </Router>
   );
 }

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
+import { UserContext } from "./contexts/UserContext.jsx";
 
 function StravaAuthHandler({ onLogin }) {
   const location = useLocation();
   const [authStatus, setAuthStatus] = useState("pending");
-
+  const { setUser } = useContext(UserContext);
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const code = queryParams.get("code");
@@ -12,7 +13,7 @@ function StravaAuthHandler({ onLogin }) {
     if (!code) {
       console.log("No authorization code found in URL.");
       setAuthStatus("error");
-      return; // Exit early if no code is found
+      return;
     }
 
     console.log("Authorization code:", code);
@@ -32,12 +33,12 @@ function StravaAuthHandler({ onLogin }) {
       })
       .then((data) => {
         console.log("Token exchange response:", data);
+        setUser(data.userProfile); // Assuming userProfile contains the user data
+        localStorage.setItem("user", JSON.stringify(data.userProfile));
         setAuthStatus("success");
         console.log("Authentication was successful");
         if (typeof onLogin === "function") {
-          onLogin(); // Safely call onLogin if it's a function
-        } else {
-          console.error("onLogin callback is not a function");
+          onLogin(); // Call onLogin if it's a function
         }
       })
       .catch((error) => {
@@ -49,7 +50,15 @@ function StravaAuthHandler({ onLogin }) {
   return (
     <div>
       {authStatus === "pending" && <p>Handling Strava Authentication...</p>}
-      {authStatus === "success" && <p>Authentication Successful!</p>}
+      {authStatus === "success" && user && (
+        <div>
+          <p>Authentication Successful!</p>
+          <p>
+            Welcome, {user.firstname} {user.lastname}
+          </p>
+          {/* Display other user details as needed */}
+        </div>
+      )}
       {authStatus === "error" && (
         <p>Authentication Failed. Please check the console for more details.</p>
       )}

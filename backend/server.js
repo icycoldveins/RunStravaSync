@@ -2,9 +2,12 @@ const express = require("express");
 const axios = require("axios");
 const session = require("express-session");
 require("dotenv").config();
+const cors = require("cors");
 
+// Enable CORS
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // Session configuration
 app.use(
@@ -18,7 +21,7 @@ app.use(
 
 app.post("/api/exchange_token", async (req, res) => {
   const { code } = req.body;
-
+  console.log(`Authorization code: ${code}`);
   try {
     const response = await axios.post("https://www.strava.com/oauth/token", {
       client_id: process.env.STRAVA_CLIENT_ID,

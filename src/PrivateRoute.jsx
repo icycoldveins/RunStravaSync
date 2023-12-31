@@ -1,15 +1,5 @@
-import React from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
-function PrivateRoute({ component: Component, isLoggedIn, ...rest }) {
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        isLoggedIn ? <Component {...props} /> : <Redirect to="/login" />
-      }
-    />
-  );
+function PrivateRoute({ isLoggedIn, redirectTo, children }) {
+  return isLoggedIn ? children : <Navigate to={redirectTo} />;
 }
-
-export default PrivateRoute;

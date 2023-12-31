@@ -1,39 +1,29 @@
-import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import ResponsiveAppBar from "./AppBar.jsx";
 import LoginPage from "./LoginPage";
-import HomePage from "./HomePage";
-import StravaAuthHandler from "./StravaAuthHandler";
-import AppBar from "./AppBar";
-import ErrorBoundary from "./ErrorBoundary";
-
-function HomePageWrapper() {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  if (!isLoggedIn) {
-    navigate("/login");
-    return null;
-  }
-
-  return <HomePage />;
-}
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = () => {
+    console.log("User has logged in");
+    setIsLoggedIn(true);
+  };
+
+  useEffect(() => {
+    console.log("isLoggedIn:", isLoggedIn);
+  }, [isLoggedIn]);
+
+  console.log("isLoggedIn (initial):", isLoggedIn);
+
   return (
-    <ErrorBoundary>
-      <Router>
-        <AppBar />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/home" element={<HomePageWrapper />} />
-        </Routes>
-      </Router>
-    </ErrorBoundary>
+    <Router>
+      <div>
+        {isLoggedIn && <ResponsiveAppBar />}
+        {!isLoggedIn && <LoginPage onLogin={handleLogin} />}
+      </div>
+    </Router>
   );
 }
 

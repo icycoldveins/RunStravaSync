@@ -1,12 +1,12 @@
 import React from "react";
 import ResponsiveAppBar from "./AppBar.jsx"; // Import the ResponsiveAppBar component
-import Home from "./Home.jsx";
-import { HomeMax } from "@mui/icons-material";
+import StravaLoginButton from "./StravaLoginButton.jsx";
 function App() {
   return (
     <div>
       <ResponsiveAppBar />
-      <Home></Home>
+      <h1>Welcome to My App</h1>
+      <StravaLoginButton />
     </div>
   );
 }

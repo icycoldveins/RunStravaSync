@@ -19,7 +19,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPersonRunning } from "@fortawesome/free-solid-svg-icons";
-
+import StravaLogo from "./assets/powered by Strava/pwrdBy_strava_white/api_logo_pwrdBy_strava_horiz_white.svg";
 const userSettings = ["Profile", "Logout"]; // User menu options
 
 export default function ButtonAppBar() {
@@ -71,6 +71,7 @@ export default function ButtonAppBar() {
             />{" "}
             RunStravaSync
           </Typography>
+          <img src={StravaLogo} alt="Strava Logo" style={{ height: "24px" }} />
 
           {/* User Menu Icon */}
           <IconButton

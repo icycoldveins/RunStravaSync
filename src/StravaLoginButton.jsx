@@ -7,10 +7,11 @@ class StravaLoginButton extends React.Component {
   }
 
   handleLogin() {
-    const clientId = "YOUR_CLIENT_ID"; // Replace with your Strava Client ID
-    const redirectUri = encodeURIComponent("YOUR_REDIRECT_URI"); // Replace with your Redirect URI
-    const scope = "read"; // Adjust the scope as needed
-
+    const clientId = import.meta.env.VITE_STRAVA_CLIENT_ID;
+    const redirectUri = encodeURIComponent(
+      import.meta.env.VITE_STRAVA_REDIRECT_URI
+    );
+    const scope = "read,read_all,activity:read";
     const authUrl = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}`;
 
     window.location.href = authUrl;

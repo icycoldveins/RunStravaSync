@@ -5,7 +5,8 @@ import { UserContext } from "./contexts/UserContext.jsx";
 function StravaAuthHandler({ onLogin }) {
   const location = useLocation();
   const [authStatus, setAuthStatus] = useState("pending");
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext); // Retrieve 'user' from context
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const code = queryParams.get("code");
@@ -13,7 +14,7 @@ function StravaAuthHandler({ onLogin }) {
     if (!code) {
       console.log("No authorization code found in URL.");
       setAuthStatus("error");
-      return;
+      return; // Exit early if no code is found
     }
 
     console.log("Authorization code:", code);
@@ -45,7 +46,7 @@ function StravaAuthHandler({ onLogin }) {
         console.error("Error in token exchange or network error:", error);
         setAuthStatus("error");
       });
-  }, [location, onLogin]);
+  }, [location, onLogin, setUser]); // Add setUser to the dependency array
 
   return (
     <div>

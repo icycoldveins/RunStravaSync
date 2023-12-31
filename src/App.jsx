@@ -6,11 +6,13 @@ import HomePage from "./HomePage.jsx";
 import { UserProvider } from "./contexts/UserContext.jsx";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("isLoggedIn")
+  );
   const handleLogin = () => {
     console.log("User has logged in");
     setIsLoggedIn(true);
+    localStorage.setItem("isLoggedIn", "true");
   };
 
   useEffect(() => {

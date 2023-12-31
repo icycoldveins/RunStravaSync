@@ -69,7 +69,7 @@ export default function ButtonAppBar() {
               icon={faPersonRunning}
               style={{ marginRight: "8px" }}
             />{" "}
-            RunStravaSync
+            RunnerSync
           </Typography>
           <img src={StravaLogo} alt="Strava Logo" style={{ height: "24px" }} />
 

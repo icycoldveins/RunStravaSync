@@ -1,43 +1,100 @@
 const express = require("express");
-const axios = require("axios");
 const session = require("express-session");
-require("dotenv").config();
-const cors = require("cors");
+const MongoDBStore = require("connect-mongodb-session")(session);
+const axios = require("axios");
+const cors = require("cors"); // You'll need to install this package
+const dotenv = require("dotenv");
 
-// Check environment variables
-if (
-  !process.env.STRAVA_CLIENT_ID ||
-  !process.env.STRAVA_CLIENT_SECRET ||
-  !process.env.SESSION_SECRET
-) {
-  console.error(
-    "Missing required environment variables. Please check your .env file."
-  );
-  process.exit(1);
-}
+dotenv.config();
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 
+// Set up MongoDB session store
+const store = new MongoDBStore({
+  uri: process.env.MONGO_URI,
+  collection: "mySessions",
+});
+
+// Enable CORS for your React application
 app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false }, // Set to true in production if using HTTPS
+  cors({
+    origin: "http://localhost:5173", // Replace with your React app's URL
+    credentials: true,
   })
 );
 
+app.use(express.json());
+
+app.use(
+  session({
+    secret: "your secret here",
+    resave: false,
+    saveUninitialized: true,
+    store: store,
+  })
+);
+
+// Strava OAuth callback endpoint
+app.get("/auth/strava/callback", async (req, res) => {
+  const code = req.query.code;
+  try {
+    const tokenResponse = await axios.post(
+      "https://www.strava.com/oauth/token",
+      {
+        client_id: process.env.STRAVA_CLIENT_ID,
+        client_secret: process.env.STRAVA_CLIENT_SECRET,
+        code: code,
+        grant_type: "authorization_code",
+      }
+    );
+
+    req.session.accessToken = tokenResponse.data.access_token;
+    req.session.refreshToken = tokenResponse.data.refresh_token;
+    req.session.expiresAt = tokenResponse.data.expires_at;
+
+    // Redirect to a specific page in your React app
+    res.redirect("http://localhost:3000/success"); // Change to your success route
+  } catch (error) {
+    console.error("Error in Strava OAuth callback:", error);
+    res.redirect("http://localhost:3000/error"); // Change to your error route
+  }
+});
+
+// Endpoint to handle login
+app.post("/api/login", async (req, res) => {
+  const { code } = req.body;
+  try {
+    // Exchange code for token if not already done in callback
+    // Store user data in session
+    // Send necessary user data back to the frontend
+    res.json({ user: req.session.user });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Check session validity
+app.get("/api/session", (req, res) => {
+  if (req.session.accessToken) {
+    res.json({ valid: true, session: req.session });
+  } else {
+    res.json({ valid: false });
+  }
+});
+app.post("/api/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      res.status(500).json({ message: "Logout failed" });
+    } else {
+      res.status(200).json({ message: "Logout successful" });
+    }
+  });
+});
 app.post("/api/exchange_token", async (req, res) => {
   const { code } = req.body;
-  if (!code) {
-    return res.status(400).json({ message: "Authorization code is missing" });
-  }
-
-  console.log(`Authorization code: ${code}`);
-
   try {
+    // Exchange code for an access token
     const tokenResponse = await axios.post(
       "https://www.strava.com/oauth/token",
       {
@@ -48,41 +105,22 @@ app.post("/api/exchange_token", async (req, res) => {
       }
     );
 
-    if (!tokenResponse.data || !tokenResponse.data.access_token) {
-      console.error("Invalid response from Strava API:", tokenResponse.data);
-      return res
-        .status(500)
-        .json({ message: "Invalid response from Strava API" });
-    }
-
-    // Fetch user profile data using the access token
-    const userProfileResponse = await axios.get(
+    // Retrieve user information using the access token
+    const userDataResponse = await axios.get(
       "https://www.strava.com/api/v3/athlete",
       {
         headers: { Authorization: `Bearer ${tokenResponse.data.access_token}` },
       }
     );
 
-    // Send both token and user profile data in response
-    res.json({
-      token: tokenResponse.data,
-      userProfile: userProfileResponse.data,
-    });
+    // Set user data in session
+    req.session.user = userDataResponse.data;
+
+    res.json(userDataResponse.data); // Send user data back to the frontend
   } catch (error) {
-    console.error(
-      "Error during token exchange or profile retrieval:",
-      error.response?.data || error.message
-    );
-    res
-      .status(500)
-      .json({
-        message:
-          "Internal server error during token exchange or profile retrieval",
-      });
+    console.error("Error during token exchange:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+app.listen(5000, () => console.log("Server is running on port 5000"));

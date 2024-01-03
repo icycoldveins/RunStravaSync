@@ -1,25 +1,18 @@
 import React from "react";
 
-class StravaLoginButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleLogin = this.handleLogin.bind(this);
-  }
-
-  handleLogin() {
+const StravaLoginButton = () => {
+  const handleLogin = () => {
     const clientId = import.meta.env.VITE_STRAVA_CLIENT_ID;
-    const redirectUri = encodeURIComponent(
-      import.meta.env.VITE_STRAVA_REDIRECT_URI
-    );
-    const scope = "read,read_all,activity:read";
-    const authUrl = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}`;
+    const redirectUri = import.meta.env.VITE_STRAVA_REDIRECT_URI;
+    const responseType = "code";
+    const scope = "read,activity:read";
+
+    const authUrl = `http://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
 
     window.location.href = authUrl;
-  }
+  };
 
-  render() {
-    return <button onClick={this.handleLogin}>Login with Strava</button>;
-  }
-}
+  return <button onClick={handleLogin}>Login with Strava</button>;
+};
 
 export default StravaLoginButton;

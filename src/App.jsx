@@ -1,36 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
-import ResponsiveAppBar from "./AppBar.jsx";
-import LoginPage from "./LoginPage";
-import HomePage from "./HomePage.jsx";
-import { UserProvider } from "./contexts/UserContext.jsx";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import StravaBar from "./StravaBar";
+import StravaLoginButton from "./StravaLoginButton";
+import StravaRedirectHandler from "./RedirectHandler";
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem("isLoggedIn")
-  );
-  const handleLogin = () => {
-    console.log("User has logged in");
-    setIsLoggedIn(true);
-    localStorage.setItem("isLoggedIn", "true");
-  };
-
-  useEffect(() => {
-    console.log("isLoggedIn:", isLoggedIn);
-  }, [isLoggedIn]);
-
-  console.log("isLoggedIn (initial):", isLoggedIn);
-
+const App = () => {
   return (
     <Router>
-      <UserProvider>
-        <div>
-          {isLoggedIn && <ResponsiveAppBar />}
-          {isLoggedIn ? <HomePage /> : <LoginPage onLogin={handleLogin} />}
-        </div>
-      </UserProvider>
+      <div>
+        <StravaBar />
+        <StravaLoginButton />
+        <Routes>
+          <Route path="/" element={<StravaRedirectHandler />} />
+        </Routes>
+      </div>
     </Router>
   );
-}
+};
 
 export default App;

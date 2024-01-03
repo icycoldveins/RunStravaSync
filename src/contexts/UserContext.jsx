@@ -5,7 +5,7 @@ export const UserContext = createContext();
 
 // Create a provider component
 export const UserProvider = ({ children }) => {
-  const initialUserState = JSON.parse(localStorage.getItem("user")) || null;
+  const initialUserState = JSON.parse(sessionStorage.getItem("user")) || null;
   const [user, setUser] = useState(initialUserState);
   // The value that will be given to the context
   const contextValue = {

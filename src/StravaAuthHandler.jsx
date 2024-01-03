@@ -35,7 +35,7 @@ function StravaAuthHandler({ onLogin }) {
       .then((data) => {
         console.log("Token exchange response:", data);
         setUser(data.userProfile); // Assuming userProfile contains the user data
-        localStorage.setItem("user", JSON.stringify(data.userProfile));
+        sessionStorage.setItem("user", JSON.stringify(data.userProfile));
         setAuthStatus("success");
         console.log("Authentication was successful");
         if (typeof onLogin === "function") {

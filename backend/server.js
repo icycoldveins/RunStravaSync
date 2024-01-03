@@ -37,6 +37,9 @@ app.use(
 // Strava OAuth callback endpoint
 app.get("/auth/strava/callback", async (req, res) => {
   const code = req.query.code;
+
+  console.log('Authorization code:', code); // Added console.log
+
   try {
     const tokenResponse = await axios.post(
       "https://www.strava.com/oauth/token",
@@ -47,6 +50,8 @@ app.get("/auth/strava/callback", async (req, res) => {
         grant_type: "authorization_code",
       }
     );
+
+    console.log('Token response:', tokenResponse.data); // Added console.log
 
     req.session.accessToken = tokenResponse.data.access_token;
     req.session.refreshToken = tokenResponse.data.refresh_token;

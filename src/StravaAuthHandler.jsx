@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { UserContext } from "./contexts/UserContext.jsx";
+import { fetchUserActivities } from "./api/strava.jsx"; // Import the function
 
 function StravaAuthHandler({ onLogin }) {
   const location = useLocation();
   const [authStatus, setAuthStatus] = useState("pending");
-  const { user, setUser } = useContext(UserContext); // Retrieve 'user' from context
+  const { user, setUser, setUserActivities } = useContext(UserContext);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -14,7 +15,7 @@ function StravaAuthHandler({ onLogin }) {
     if (!code) {
       console.log("No authorization code found in URL.");
       setAuthStatus("error");
-      return; // Exit early if no code is found
+      return;
     }
 
     console.log("Authorization code:", code);
@@ -34,10 +35,25 @@ function StravaAuthHandler({ onLogin }) {
       })
       .then((data) => {
         console.log("Token exchange response:", data);
-        setUser(data.userProfile); // Assuming userProfile contains the user data
+        setUser(data.userProfile);
         sessionStorage.setItem("user", JSON.stringify(data.userProfile));
         setAuthStatus("success");
         console.log("Authentication was successful");
+
+        // Check if activities data is included in the response
+        // Check if userActivities data is included in the response
+        if (data.userActivities) {
+          // Update userActivities in the context with the fetched activity data
+          setUserActivities(data.userActivities);
+          sessionStorage.setItem(
+            "userActivities",
+            JSON.stringify(data.userActivities)
+          ); // Store userActivities in session storage
+          console.log("Here is User Activities:", data.userActivities);
+        } else {
+          console.log("No userActivities data found in the response.");
+        }
+
         if (typeof onLogin === "function") {
           onLogin(); // Call onLogin if it's a function
         }
@@ -46,7 +62,7 @@ function StravaAuthHandler({ onLogin }) {
         console.error("Error in token exchange or network error:", error);
         setAuthStatus("error");
       });
-  }, [location, onLogin, setUser]); // Add setUser to the dependency array
+  }, [location, onLogin, setUser, setUserActivities]);
 
   return (
     <div>
@@ -57,7 +73,6 @@ function StravaAuthHandler({ onLogin }) {
           <p>
             Welcome, {user.firstname} {user.lastname}
           </p>
-          {/* Display other user details as needed */}
         </div>
       )}
       {authStatus === "error" && (

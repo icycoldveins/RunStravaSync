@@ -55,34 +55,68 @@ app.post("/api/exchange_token", async (req, res) => {
         .json({ message: "Invalid response from Strava API" });
     }
 
+    const accessToken = tokenResponse.data.access_token;
+
     // Fetch user profile data using the access token
     const userProfileResponse = await axios.get(
       "https://www.strava.com/api/v3/athlete",
       {
-        headers: { Authorization: `Bearer ${tokenResponse.data.access_token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
 
-    // Send both token and user profile data in response
+    // Fetch user running activities using the access token
+    const userActivitiesResponse = await axios.get(
+      "https://www.strava.com/api/v3/athlete/activities?type=Run",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    
+
+    console.log("User Activities:", userActivitiesResponse.data); // Log the user activities
+
     res.json({
       token: tokenResponse.data,
       userProfile: userProfileResponse.data,
+      userActivities: userActivitiesResponse.data,
     });
   } catch (error) {
     console.error(
-      "Error during token exchange or profile retrieval:",
+      "Error during token exchange, profile retrieval, or activities retrieval:",
       error.response?.data || error.message
     );
-    res
-      .status(500)
-      .json({
-        message:
-          "Internal server error during token exchange or profile retrieval",
-      });
+    res.status(500).json({
+      message:
+        "Internal server error during token exchange, profile retrieval, or activities retrieval",
+    });
   }
 });
 
-const PORT = process.env.PORT || 3001;
+// Example endpoint to fetch Strava activities
+app.get("/api/strava/activities", async (req, res) => {
+  const accessToken = req.query.accessToken;
+  const type = 'Run'; // Fetch only running activities
+
+  try {
+    const activitiesResponse = await axios.get(
+      "https://www.strava.com/api/v3/athlete/activities?type=Run",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+
+    res.json(activitiesResponse.data);
+  } catch (error) {
+    console.error(
+      "Error fetching Strava activities:",
+      error.response?.data || error.message
+    );
+    res.status(500).json({ message: "Error fetching Strava activities" });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

@@ -3,7 +3,19 @@ const axios = require("axios");
 const session = require("express-session");
 require("dotenv").config();
 const cors = require("cors");
+const mongoose = require('mongoose');
 
+mongoose
+  .connect(process.env.MONGODB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((err) => {
+    console.error("Error connecting to MongoDB", err);
+  });
 // Check environment variables
 if (
   !process.env.STRAVA_CLIENT_ID ||
@@ -72,7 +84,6 @@ app.post("/api/exchange_token", async (req, res) => {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
-    
 
     console.log("User Activities:", userActivitiesResponse.data); // Log the user activities
 
@@ -96,7 +107,7 @@ app.post("/api/exchange_token", async (req, res) => {
 // Example endpoint to fetch Strava activities
 app.get("/api/strava/activities", async (req, res) => {
   const accessToken = req.query.accessToken;
-  const type = 'Run'; // Fetch only running activities
+  const type = "Run"; // Fetch only running activities
 
   try {
     const activitiesResponse = await axios.get(

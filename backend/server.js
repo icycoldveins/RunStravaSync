@@ -3,8 +3,9 @@ const axios = require("axios");
 const session = require("express-session");
 require("dotenv").config();
 const cors = require("cors");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
+mongoose;
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -127,7 +128,5 @@ app.get("/api/strava/activities", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+module.exports = app; // Export the app instance

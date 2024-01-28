@@ -130,3 +130,4 @@ app.get("/api/strava/activities", async (req, res) => {
 
 
 module.exports = app; // Export the app instance
+

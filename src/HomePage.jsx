@@ -3,6 +3,7 @@ import { UserContext } from "./contexts/UserContext";
 import Chart from "chart.js/auto";
 import ActivityRunningStatistics from "./components/ActivityRunningStatistics.jsx";
 import WeightLiftingStatistics from "./components/WeightLiftingStatistics.jsx";
+import ElevationProfileStatistics from "./components/ElevationProfileStatistics.jsx";
 
 function HomePage() {
   const { user, userActivities } = useContext(UserContext);
@@ -22,6 +23,9 @@ function HomePage() {
 
   // Reference to the weight training chart canvas
   const weightTrainingChartRef = useRef(null);
+
+  // Reference to the elevation chart canvas
+  const elevationChartRef = useRef(null);
 
   useEffect(() => {
     if (runningActivities.length === 0 || !runningChartRef.current) return;
@@ -44,13 +48,6 @@ function HomePage() {
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1,
           },
-          {
-            label: "Duration (seconds)",
-            data: runningActivities.map((activity) => activity.duration),
-            backgroundColor: "rgba(255, 99, 132, 0.6)",
-            borderColor: "rgba(255, 99, 132, 1)",
-            borderWidth: 1,
-          },
         ],
       },
       options: {
@@ -60,7 +57,7 @@ function HomePage() {
             beginAtZero: true,
             title: {
               display: true,
-              text: "Distance (meters) / Duration (seconds)",
+              text: "Distance (meters)",
             },
           },
         },
@@ -72,7 +69,11 @@ function HomePage() {
   }, [runningActivities]);
 
   useEffect(() => {
-    if (weightTrainingActivities.length === 0 || !weightTrainingChartRef.current) return;
+    if (
+      weightTrainingActivities.length === 0 ||
+      !weightTrainingChartRef.current
+    )
+      return;
 
     // Destroy previous weight training chart if it exists
     if (weightTrainingChartRef.current.chart) {
@@ -87,7 +88,9 @@ function HomePage() {
         datasets: [
           {
             label: "Duration (seconds)",
-            data: weightTrainingActivities.map((activity) => activity.elapsed_time),
+            data: weightTrainingActivities.map(
+              (activity) => activity.elapsed_time
+            ),
             backgroundColor: "rgba(255, 99, 132, 0.6)",
             borderColor: "rgba(255, 99, 132, 1)",
             borderWidth: 1,
@@ -112,9 +115,54 @@ function HomePage() {
     weightTrainingChartRef.current.chart = weightTrainingChart;
   }, [weightTrainingActivities]);
 
+  useEffect(() => {
+    if (runningActivities.length === 0 || !elevationChartRef.current) return;
+
+    // Destroy previous elevation chart if it exists
+    if (elevationChartRef.current.chart) {
+      elevationChartRef.current.chart.destroy();
+    }
+
+    // Create a new elevation chart
+    const elevationChart = new Chart(elevationChartRef.current, {
+      type: "line",
+      data: {
+        labels: runningActivities.map((_, index) => `Point ${index + 1}`),
+        datasets: [
+          {
+            label: "Elevation (meters)",
+            data: runningActivities.map(
+              (activity) => activity.total_elevation_gain
+            ), // Simulated elevation data
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
+            fill: false,
+            tension: 0.4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Elevation (meters)",
+            },
+          },
+        },
+      },
+    });
+
+    // Store the chart instance in the ref
+    elevationChartRef.current.chart = elevationChart;
+  }, [runningActivities]);
+
   return (
     <div>
-      <h1>Welcome to the Home Page</h1>
+      <h1>Welcome to RunnerSync</h1>
       {user && <p>Welcome back, {user.firstname}!</p>}
 
       {/* Display bar chart for running activities */}
@@ -123,6 +171,8 @@ function HomePage() {
           <h2>Running Activities</h2>
           <canvas ref={runningChartRef} />
           <ActivityRunningStatistics activities={runningActivities} />
+          <canvas ref={elevationChartRef} />
+          <ElevationProfileStatistics activities={runningActivities} />
         </div>
       )}
 
@@ -136,9 +186,10 @@ function HomePage() {
       )}
 
       {/* Display message if no running or weight training activities */}
-      {runningActivities.length === 0 && weightTrainingActivities.length === 0 && (
-        <p>No activities to display.</p>
-      )}
+      {runningActivities.length === 0 &&
+        weightTrainingActivities.length === 0 && (
+          <p>No activities to display.</p>
+        )}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import Chart from "chart.js/auto";
 import ActivityRunningStatistics from "./components/ActivityRunningStatistics.jsx";
 import WeightLiftingStatistics from "./components/WeightLiftingStatistics.jsx";
 import ElevationProfileStatistics from "./components/ElevationProfileStatistics.jsx";
-
+import StatisticsViewer from "./components/StatisticsViewer.jsx";
 function HomePage() {
   const { user, userActivities } = useContext(UserContext);
 
@@ -190,6 +190,7 @@ function HomePage() {
         weightTrainingActivities.length === 0 && (
           <p>No activities to display.</p>
         )}
+        <StatisticsViewer></StatisticsViewer>
     </div>
   );
 }

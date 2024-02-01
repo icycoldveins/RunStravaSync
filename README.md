@@ -1,8 +1,10 @@
 # RunnerSync
 ![Alt text](<Screenshot 2024-01-27 at 6.48.55 PM.png>)
-## Overview
+![Alt text](<Screenshot 2024-02-01 at 4.37.07 PM.png>)
 
-RunnerSync is a fitness tracking and analysis platform designed for track and field athletes. It offers specialized tools and insights to help athletes enhance their performance, strategize their training, and achieve their athletic goals by integrating seamlessly with Strava.
+# Overview
+
+RunnerSync is a fitness tracking and analysis platform designed for track and field athletes. It seamlessly integrates with Strava, offering specialized tools and insights to help athletes enhance their performance and achieve their athletic goals.
 
 ## Features
 
@@ -13,23 +15,13 @@ RunnerSync is a fitness tracking and analysis platform designed for track and fi
 
 ### Advanced Analytics
 
-- Dive deep into analytics with metrics like speed, elevation changes, heart rate, and more.
+- Dive into analytics with metrics like speed, elevation changes, heart rate, and more.
 - Visualize your performance with interactive charts and graphs.
 
-### Goal Setting and Progress Tracking
+### AI-Driven Insights and Suggestions
 
-- Personalize your goals for different track and field events and monitor your progress.
-- Adapt your training methods based on data-driven insights.
-
-### Customizable Dashboard
-
-- Tailor your dashboard to highlight the most important metrics for you.
-- Gain quick insights into your daily, weekly, and monthly activities.
-
-### Community Features
-
-- Connect and engage with fellow track and field athletes.
-- Participate in community challenges and contests to challenge your skills.
+- Utilize OpenAI integration to receive personalized training and recovery suggestions.
+- Enhance your training regimen with AI-generated actionable insights based on your performance data.
 
 ### Mobile Compatibility
 
@@ -40,7 +32,7 @@ RunnerSync is a fitness tracking and analysis platform designed for track and fi
 - **Frontend**: React.js with Redux for state management, D3.js for data visualizations.
 - **Backend**: Node.js and Express for server-side operations.
 - **Database**: MongoDB for efficient data storage.
-- **API Integration**: Strava API for seamless activity data synchronization.
+- **API Integration**: Strava API for seamless activity data synchronization and OpenAI for generating insights.
 - **Authentication**: Secure OAuth integration with Strava.
 - **Hosting**: AWS for robust scalability.
 - **Testing**: Jest for frontend tests, Mocha for backend tests.
@@ -75,16 +67,6 @@ RunnerSync is a fitness tracking and analysis platform designed for track and fi
    ```bash
    npm start
    ```
-
-## Contributing
-
-We welcome contributions from everyone, including bug fixes, feature additions, or improvements in documentation.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/YourFeature`)
-3. Commit your Changes (`git commit -m 'Add some YourFeature'`)
-4. Push to the Branch (`git push origin feature/YourFeature`)
-5. Open a Pull Request
 
 ## License
 

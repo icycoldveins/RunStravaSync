@@ -121,6 +121,7 @@ app.post("/api/generate-suggestions", async (req, res) => {
   }
 });
 
+
 // Example endpoint to fetch Strava activities
 app.get("/api/strava/activities", async (req, res) => {
   const accessToken = req.query.accessToken;

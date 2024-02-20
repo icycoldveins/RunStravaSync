@@ -49,6 +49,13 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // Ensure your API key is correctly set in your environment variables
 });
 
+const suggestionSchema = new mongoose.Schema({
+  content: {
+    type: String,
+    required: true,
+  },
+});
+const Suggestion = mongoose.model("Suggestion", suggestionSchema);
 app.post("/api/generate-suggestions", async (req, res) => {
   try {
     const { activities } = req.body; // Expecting an array of activity objects
@@ -92,75 +99,25 @@ app.post("/api/generate-suggestions", async (req, res) => {
       presence_penalty: 0.0,
     });
 
-    const suggestion = chatCompletion.choices[0].message.content.trim();
+    const suggestionContent = chatCompletion.choices[0].message.content.trim();
 
-    res.json({ suggestion });
+    // Check if a suggestion document already exists in the database
+    let existingSuggestion = await Suggestion.findOne();
+    if (!existingSuggestion) {
+      // If no existing document found, create a new one
+      existingSuggestion = new Suggestion({ content: suggestionContent });
+    } else {
+      // If an existing document found, update its content
+      existingSuggestion.content = suggestionContent;
+    }
+
+    // Save or update the suggestion in MongoDB using Mongoose
+    await existingSuggestion.save();
+
+    res.json({ suggestion: suggestionContent });
   } catch (error) {
     console.error("Error generating suggestions:", error);
     res.status(500).json({ message: "Failed to generate suggestions" });
-  }
-});
-
-app.post("/api/exchange_token", async (req, res) => {
-  const { code } = req.body;
-  if (!code) {
-    return res.status(400).json({ message: "Authorization code is missing" });
-  }
-
-  console.log(`Authorization code: ${code}`);
-
-  try {
-    const tokenResponse = await axios.post(
-      "https://www.strava.com/oauth/token",
-      {
-        client_id: process.env.STRAVA_CLIENT_ID,
-        client_secret: process.env.STRAVA_CLIENT_SECRET,
-        code,
-        grant_type: "authorization_code",
-      }
-    );
-
-    if (!tokenResponse.data || !tokenResponse.data.access_token) {
-      console.error("Invalid response from Strava API:", tokenResponse.data);
-      return res
-        .status(500)
-        .json({ message: "Invalid response from Strava API" });
-    }
-
-    const accessToken = tokenResponse.data.access_token;
-
-    // Fetch user profile data using the access token
-    const userProfileResponse = await axios.get(
-      "https://www.strava.com/api/v3/athlete",
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-
-    // Fetch user running activities using the access token
-    const userActivitiesResponse = await axios.get(
-      "https://www.strava.com/api/v3/athlete/activities?type=Run",
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-
-    console.log("User Activities:", userActivitiesResponse.data); // Log the user activities
-
-    res.json({
-      token: tokenResponse.data,
-      userProfile: userProfileResponse.data,
-      userActivities: userActivitiesResponse.data,
-    });
-  } catch (error) {
-    console.error(
-      "Error during token exchange, profile retrieval, or activities retrieval:",
-      error.response?.data || error.message
-    );
-    res.status(500).json({
-      message:
-        "Internal server error during token exchange, profile retrieval, or activities retrieval",
-    });
   }
 });
 

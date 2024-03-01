@@ -50,4 +50,5 @@ const SuggestionsComponent = () => {
   );
 };
 
+
 export default SuggestionsComponent;

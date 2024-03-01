@@ -1,22 +1,16 @@
 version: 2.1
 
-orbs:
-  node: circleci/node@4.7.0
-
 jobs:
-  build-and-test:
+  build:
     docker:
-      - image: cimg/node:14.17 # Use an image with the version of Node.js that matches your project
+      - image: cimg/node:14.17 # Specify the Node.js version you need
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          name: Run tests
-          command: npm test
+      - run: npm install
+      - run: npm test
 
 workflows:
   version: 2
-  build-and-test-workflow:
+  build-and-test:
     jobs:
-      - build-and-test
+      - build

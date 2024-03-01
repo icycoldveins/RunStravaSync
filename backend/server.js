@@ -4,6 +4,7 @@ const session = require("express-session");
 require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
+require('openai/shims/node');
 
 mongoose;
 mongoose

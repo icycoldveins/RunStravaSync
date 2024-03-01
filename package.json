@@ -8,6 +8,8 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
+    "test:backend": "jest --selectProjects backend",
+    "test:frontend": "jest --selectProjects frontend",
     "test": "jest"
   },
   "dependencies": {

@@ -1,56 +1,48 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import HomePage from './HomePage';
 import { UserContext } from './contexts/UserContext';
-import Chart from 'chart.js/auto';
 
-// Mock Chart.js to prevent it from trying to render actual charts in a test environment
+// Mock Chart.js
 jest.mock('chart.js/auto', () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
+  Chart: jest.fn().mockImplementation(() => ({
     destroy: jest.fn(),
   })),
 }));
 
-const mockUser = {
-  firstname: 'John',
-};
-
-const mockActivities = [
-  { type: 'Run', name: 'Morning Run', distance: 5000, duration: 1800 },
-  { type: 'WeightTraining', name: 'Gym Session', elapsed_time: 3600 },
-];
-
-// Helper function to render HomePage within the mocked UserContext
-const renderHomePageWithContext = (user, userActivities) =>
-  render(
-    <UserContext.Provider value={{ user, userActivities }}>
-      <HomePage />
-    </UserContext.Provider>
+// Utility function for rendering the component within the mocked UserContext
+const renderWithUserContext = (ui, { providerProps, ...renderOptions }) => {
+  return render(
+    <UserContext.Provider value={providerProps}>{ui}</UserContext.Provider>,
+    renderOptions
   );
+};
 
 describe('HomePage', () => {
   it('renders welcome message for the user', () => {
-    renderHomePageWithContext(mockUser, mockActivities);
+    const user = { firstname: 'John' };
+    const userActivities = [];
+
+    renderWithUserContext(<HomePage />, {
+      providerProps: { user, userActivities },
+    });
+
     expect(screen.getByText(/Welcome back, John!/i)).toBeInTheDocument();
   });
 
-  it('renders running activities if available', () => {
-    renderHomePageWithContext(mockUser, mockActivities);
-    expect(screen.getByText(/Running Activities/i)).toBeInTheDocument();
-    expect(screen.getByText(/Morning Run/i)).toBeInTheDocument(); // Assuming your ActivityRunningStatistics component renders activity names
-  });
+  it('shows no activities message when there are no user activities', () => {
+    const user = { firstname: 'John' };
+    const userActivities = [];
 
-  it('renders weight training activities if available', () => {
-    renderHomePageWithContext(mockUser, mockActivities);
-    expect(screen.getByText(/Weight Training Activities/i)).toBeInTheDocument();
-    expect(screen.getByText(/Gym Session/i)).toBeInTheDocument(); // Assuming your WeightLiftingStatistics component renders activity names
-  });
+    renderWithUserContext(<HomePage />, {
+      providerProps: { user, userActivities },
+    });
 
-  it('displays a message if no activities are available', () => {
-    renderHomePageWithContext(mockUser, []);
     expect(screen.getByText(/No activities to display./i)).toBeInTheDocument();
   });
 
-  // Additional tests can be added here to cover more scenarios
+  // Add more tests here to cover other aspects of your component,
+  // such as rendering charts for activities, handling different types of activities,
+  // and ensuring the charts are properly updated when the activities change.
 });

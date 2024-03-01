@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/node:14.17 # Specify the Node.js version you need
+      - image: cimg/node
     steps:
       - checkout
       - run: npm install

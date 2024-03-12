@@ -34,7 +34,6 @@ RunnerSync is a fitness tracking and analysis platform designed for track and fi
 - **Database**: MongoDB for efficient data storage.
 - **API Integration**: Strava API for seamless activity data synchronization and OpenAI for generating insights.
 - **Authentication**: Secure OAuth integration with Strava.
-- **Hosting**: AWS for robust scalability.
 - **Testing**: Jest for frontend tests, Mocha for backend tests.
 - **CI/CD**: Automated workflows with GitHub Actions.
 
